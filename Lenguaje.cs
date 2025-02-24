@@ -180,6 +180,7 @@ namespace ASM
                     // Como no se ingresó un número desde el Console, entonces viene de una expresión matemática
                     Expresion();
                     float resultado = s.Pop();
+                    asm.WriteLine("     POP");
                     l.Last().setValor(resultado);
                 }
             }
@@ -306,6 +307,7 @@ namespace ASM
                             throw new Error("Entrada invalida: Solo se permiten numeros enteros.");
                         }
                         s.Push(numero);
+                        asm.WriteLine("     PUSH");
                         v?.setValor(numero, maxTipo);
                     }
                     match(")");
@@ -314,6 +316,7 @@ namespace ASM
                 {
                     Expresion();
                     r = s.Pop();
+                    asm.WriteLine("     POP");
                     v.setValor(r, maxTipo);
                 }
             }
@@ -322,6 +325,7 @@ namespace ASM
                 match("+=");
                 Expresion();
                 r = v.getValor() + s.Pop();
+                asm.WriteLine("     POP");
                 v.setValor(r);
             }
             else if (Contenido == "-=")
@@ -329,6 +333,7 @@ namespace ASM
                 match("-=");
                 Expresion();
                 r = v.getValor() - s.Pop();
+                asm.WriteLine("     POP");
                 v.setValor(r);
             }
             else if (Contenido == "*=")
@@ -336,6 +341,7 @@ namespace ASM
                 match("*=");
                 Expresion();
                 r = v.getValor() * s.Pop();
+                asm.WriteLine("     POP");
                 v.setValor(r);
             }
             else if (Contenido == "/=")
@@ -343,6 +349,7 @@ namespace ASM
                 match("/=");
                 Expresion();
                 r = v.getValor() / s.Pop();
+                asm.WriteLine("     POP");
                 v.setValor(r);
             }
             else if (Contenido == "%=")
@@ -350,6 +357,7 @@ namespace ASM
                 match("%=");
                 Expresion();
                 r = v.getValor() % s.Pop();
+                asm.WriteLine("     POP");
                 v.setValor(r);
             }
             //displayStack();
@@ -391,11 +399,13 @@ namespace ASM
             maxTipo = Variable.TipoDato.Char;
             Expresion();
             float valor1 = s.Pop();
+            asm.WriteLine("     POP");
             string operador = Contenido;
             match(Tipos.OperadorRelacional);
             maxTipo = Variable.TipoDato.Char;
             Expresion();
             float valor2 = s.Pop();
+            asm.WriteLine("     POP");
             switch (operador)
             {
                 case ">": return valor1 > valor2;
@@ -568,11 +578,20 @@ namespace ASM
                 Termino();
                 //Console.Write(operador + " ");
                 float n1 = s.Pop();
+                asm.WriteLine("     POP EBX");
+
                 float n2 = s.Pop();
+                asm.WriteLine("     POP EAX");
                 switch (operador)
                 {
-                    case "+": s.Push(n2 + n1); break;
-                    case "-": s.Push(n2 - n1); break;
+                    case "+": s.Push(n2 + n1);
+                    asm.WriteLine("     ADD EAX, EBX");
+                    asm.WriteLine("     PUSH EAX");
+                    break;
+                    case "-": s.Push(n2 - n1);
+                    asm.WriteLine("     SUB EAX, EBX");
+                    asm.WriteLine("     PUSH EAX");
+                    break;
                 }
             }
         }
@@ -592,12 +611,23 @@ namespace ASM
                 Factor();
                 //Console.Write(operador + " ");
                 float n1 = s.Pop();
+                asm.WriteLine("     POP EBX");
                 float n2 = s.Pop();
+                asm.WriteLine("     POP EAX");
                 switch (operador)
                 {
-                    case "*": s.Push(n2 * n1); break;
-                    case "/": s.Push(n2 / n1); break;
-                    case "%": s.Push(n2 % n1); break;
+                    case "*": s.Push(n2 * n1);
+                    asm.WriteLine("     MUL EBX");
+                    asm.WriteLine("     PUSH AX");
+                    break;
+                    case "/": s.Push(n2 / n1);
+                    asm.WriteLine("     DIV EBX");
+                    asm.WriteLine("     PUSH AL");
+                    break;
+                    case "%": s.Push(n2 % n1);
+                    asm.WriteLine("     DIV EBX");
+                    asm.WriteLine("     PUSH AH");
+                    break;
                 }
             }
         }
@@ -614,6 +644,8 @@ namespace ASM
                 }
 
                 s.Push(float.Parse(Contenido));
+                asm.WriteLine("     MOV EAX," + Contenido);
+                asm.WriteLine("     PUSH AX");
                 match(Tipos.Numero);
             }
             else if (Clasificacion == Tipos.Identificador)
@@ -631,6 +663,8 @@ namespace ASM
                 }
 
                 s.Push(v.getValor());
+                asm.WriteLine("     MOV EAX," + Contenido);
+                asm.WriteLine("     PUSH EAX");
                 match(Tipos.Identificador);
             }
             else
@@ -659,6 +693,7 @@ namespace ASM
                 if (huboCasteo)
                 {
                     float valor = s.Pop(); // Obtener el valor actual de la pila
+                    asm.WriteLine("     POP");
                     switch (tipoCasteo)
                     {
                         case Variable.TipoDato.Int:
@@ -672,6 +707,7 @@ namespace ASM
                             break;    
                     }
                     s.Push(valor); // Regresar el valor casteado al stack
+                    asm.WriteLine("     PUSH");
                     maxTipo = tipoCasteo; // Actualizar el tipo máximo
                 }
                 match(")");

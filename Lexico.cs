@@ -98,6 +98,8 @@ namespace ASM
                 log.WriteLine("Archivo: " + nombreArchivo);
                 log.WriteLine("Fecha y hora: " + ahora.ToString());
                 log.WriteLine("----------------------------------");
+                asm.WriteLine(";Archivo: " + nombreArchivo);
+                asm.WriteLine(";Fecha y hora: " + ahora.ToString());
             }
             else
             {

@@ -85,9 +85,9 @@ namespace ASM
 
             if (Path.GetExtension(nombreArchivo) != ".cpp")
             {
-                throw new Error("El archivo debe ser de extensión .cpp",log);
+                throw new Error("El archivo debe ser de extensión .cpp", log);
             }
-            
+
             if (File.Exists(nombreArchivo))
             {
                 asm = new StreamWriter(nombreArchivoWithoutExt + ".asm");
@@ -100,10 +100,15 @@ namespace ASM
                 log.WriteLine("----------------------------------");
                 asm.WriteLine(";Archivo: " + nombreArchivo);
                 asm.WriteLine(";Fecha y hora: " + ahora.ToString());
+                // Encabezado ensamblador
+                asm.WriteLine("SEGMENT .TEXT");
+                asm.WriteLine("GLOBAL MAIN");
+                asm.WriteLine("MAIN:");
+
             }
             else
             {
-                throw new Error ("El archivo " + Path.GetExtension(nombreArchivo) + " no existe", log);
+                throw new Error("El archivo " + Path.GetExtension(nombreArchivo) + " no existe", log);
             }
         }
         public void Dispose()
@@ -254,7 +259,7 @@ namespace ASM
                 case 25:
                 case 26: Clasificacion = Tipos.OperadorRelacional; break;
                 case 23: Clasificacion = Tipos.Asignacion; break;
-                case 27: Clasificacion = Tipos.Cadena; break;
+                case 27: Clasificacion = Tipos.Cadena; break;
             }
         }
         public void nextToken()
@@ -319,14 +324,14 @@ namespace ASM
                         case "char":
                         case "int":
                         case "float":
-                            Clasificacion=Tipos.TipoDato;
+                            Clasificacion = Tipos.TipoDato;
                             break;
                         case "if":
                         case "else":
                         case "do":
                         case "while":
                         case "for":
-                            Clasificacion=Tipos.PalabraReservada;
+                            Clasificacion = Tipos.PalabraReservada;
                             break;
                     }
                 }

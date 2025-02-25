@@ -30,6 +30,10 @@ NUEVOS REQUERIMIENTOS AUTOMATAS I:
     3) Implementar linea y columna en los errores semanticos[Listo]
     4) Implementar maxTipo en la asignacion, es decir, cuando se haga v.setValor(r)
     5) Implementar el casteo en el stack
+
+
+    -----------------------------REQUERIMIENTOS Parcial 2-----------------------------
+    1) Declarar las variables en ensamblador con su tipo de dato
     ***********************************************************************************
 */
 
@@ -73,10 +77,12 @@ namespace ASM
 
         private void displayLista()
         {
+            asm.WriteLine(".DATA");
             log.WriteLine("Lista de variables: ");
             foreach (Variable elemento in l)
             {
                 log.WriteLine($"{elemento.getNombre()} {elemento.getTipoDato()} {elemento.getValor()}");
+                asm.WriteLine($"    {elemento.getNombre()} DW 0"); //{elemento.getValor()}");
             }
         }
 
@@ -314,9 +320,11 @@ namespace ASM
                 }
                 else
                 {
+                    asm.WriteLine($"    Asignacion de {v.getNombre()}");
                     Expresion();
                     r = s.Pop();
-                    asm.WriteLine("     POP");
+                    asm.WriteLine("     POP EAX");
+                    asm.WriteLine($"    MOV DWORD[{v.getNombre()}], EAX");
                     v.setValor(r, maxTipo);
                 }
             }
@@ -622,11 +630,11 @@ namespace ASM
                     break;
                     case "/": s.Push(n2 / n1);
                     asm.WriteLine("     DIV EBX");
-                    asm.WriteLine("     PUSH AL");
+                    asm.WriteLine("     PUSH EAX");
                     break;
                     case "%": s.Push(n2 % n1);
                     asm.WriteLine("     DIV EBX");
-                    asm.WriteLine("     PUSH AH");
+                    asm.WriteLine("     PUSH EDX");
                     break;
                 }
             }

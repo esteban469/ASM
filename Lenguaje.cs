@@ -34,6 +34,13 @@ NUEVOS REQUERIMIENTOS AUTOMATAS I:
 
     -----------------------------REQUERIMIENTOS Parcial 2-----------------------------
     1) Declarar las variables en ensamblador con su tipo de dato
+    2) En asignacion generar codigo en ensamblador para ++(inc) --(dec)
+    3) En asignacion generar codigo en ensamblador para += -= *= /= %=
+    4) Generar codigo en ensamblador para console.Write/WriteLine
+    5) Generar codigo para Console.Read/ReadLine
+    6) Programar el do while
+    7) Programar el while
+    8) Programar el for
     ***********************************************************************************
 */
 
@@ -77,12 +84,12 @@ namespace ASM
 
         private void displayLista()
         {
-            asm.WriteLine(".DATA");
+            asm.WriteLine("section .data");
             log.WriteLine("Lista de variables: ");
             foreach (Variable elemento in l)
             {
                 log.WriteLine($"{elemento.getNombre()} {elemento.getTipoDato()} {elemento.getValor()}");
-                asm.WriteLine($"    {elemento.getNombre()} DW 0"); //{elemento.getValor()}");
+                asm.WriteLine($"    {elemento.getNombre()} DB 0"); //{elemento.getValor()}");
             }
         }
 
@@ -184,9 +191,11 @@ namespace ASM
                 else
                 {
                     // Como no se ingresó un número desde el Console, entonces viene de una expresión matemática
+                    //asm.WriteLine($"    Asignacion de {v.getNombre()}");
                     Expresion();
                     float resultado = s.Pop();
-                    asm.WriteLine("     POP");
+                    asm.WriteLine("     POP EAX");
+                    asm.WriteLine($"     MOV DWORD[{v.getNombre()}], EAX");
                     l.Last().setValor(resultado);
                 }
             }
@@ -324,7 +333,7 @@ namespace ASM
                     Expresion();
                     r = s.Pop();
                     asm.WriteLine("     POP EAX");
-                    asm.WriteLine($"    MOV DWORD[{v.getNombre()}], EAX");
+                    asm.WriteLine($"     MOV DWORD[{v.getNombre()}], EAX");
                     v.setValor(r, maxTipo);
                 }
             }
@@ -626,7 +635,7 @@ namespace ASM
                 {
                     case "*": s.Push(n2 * n1);
                     asm.WriteLine("     MUL EBX");
-                    asm.WriteLine("     PUSH AX");
+                    asm.WriteLine("     PUSH EAX");
                     break;
                     case "/": s.Push(n2 / n1);
                     asm.WriteLine("     DIV EBX");
@@ -653,7 +662,7 @@ namespace ASM
 
                 s.Push(float.Parse(Contenido));
                 asm.WriteLine("     MOV EAX," + Contenido);
-                asm.WriteLine("     PUSH AX");
+                asm.WriteLine("     PUSH EAX");
                 match(Tipos.Numero);
             }
             else if (Clasificacion == Tipos.Identificador)

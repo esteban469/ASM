@@ -1,41 +1,34 @@
 ;Archivo: prueba.cpp
-;Fecha y hora: 26/02/2025 11:53:39 a. m.
-SEGMENT .TEXT
-GLOBAL MAIN
-MAIN:
-     MOV EAX,3
+;Fecha y hora: 28/02/2025 11:52:40 a. m.
+segment .text
+global main
+main:
+    ;Asignacion de x26
+     MOV EAX,200
      PUSH EAX
-     MOV EAX,5
+     POP EAX
+     MOV DWORD[x26],EAX
+	; do
+jmp_DO_ 1 :
+    ;Asignacion de x26
+     MOV EAX,x26
+     PUSH EAX
+     MOV EAX,1
      PUSH EAX
      POP EBX
      POP EAX
      ADD EAX, EBX
      PUSH EAX
-     MOV EAX,8
+     POP EAX
+     MOV DWORD[x26],EAX
+     MOV EAX,x26
+     PUSH EAX
+     MOV EAX,211
      PUSH EAX
      POP EBX
      POP EAX
-     MUL EBX
-     PUSH EAX
-     MOV EAX,10
-     PUSH EAX
-     MOV EAX,4
-     PUSH EAX
-     POP EBX
-     POP EAX
-     SUB EAX, EBX
-     PUSH EAX
-     MOV EAX,2
-     PUSH EAX
-     POP EBX
-     POP EAX
-     DIV EBX
-     PUSH EAX
-     POP EBX
-     POP EAX
-     SUB EAX, EBX
-     PUSH EAX
-     POP EAX
-     MOV DWORD[x26], EAX
-SECTION .DATA
+     CMP EAX, EBX
+     JB jmp_DO_ 1 
+	RET
+section .data
     x26 DB 0

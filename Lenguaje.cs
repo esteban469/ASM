@@ -33,9 +33,9 @@ NUEVOS REQUERIMIENTOS AUTOMATAS I:
 
 
     -----------------------------REQUERIMIENTOS Parcial 2-----------------------------
-    1) Declarar las variables en ensamblador con su tipo de dato
-    2) En asignacion generar codigo en ensamblador para ++(inc) --(dec)
-    3) En asignacion generar codigo en ensamblador para += -= *= /= %=
+    1) Declarar las variables en ensamblador con su tipo de dato [LISTO]
+    2) En asignacion generar codigo en ensamblador para ++(inc) --(dec) [LISTO]
+    3) En asignacion generar codigo en ensamblador para += -= *= /= %= [LISTO]
     4) Generar codigo en ensamblador para console.Write/WriteLine
     5) Generar codigo para Console.Read/ReadLine
     6) Programar el do while
@@ -96,7 +96,7 @@ namespace ASM
             foreach (Variable elemento in l)
             {
                 log.WriteLine($"{elemento.getNombre()} {elemento.getTipoDato()} {elemento.getValor()}");
-                asm.WriteLine($"    {elemento.getNombre()} DB 0"); //{elemento.getValor()}");
+                asm.WriteLine($"    {elemento.getNombre()} DD 0"); //{elemento.getValor()}");
             }
         }
 
@@ -294,18 +294,24 @@ namespace ASM
                 throw new Error("Sintaxis: La variable " + Contenido + " no está definida", log, linea, columna);
             }
             //Console.Write(getContenido() + " = ");
+            //2) En asignacion generar codigo en ensamblador para ++(inc) --(dec)
+            //inc dword [a]  ; Incrementa el valor almacenado en a en 1
             match(Tipos.Identificador);
             if (Contenido == "++")
             {
                 match("++");
                 r = v.getValor() + 1;
                 v.setValor(r);
+                asm.WriteLine("; Incremento termino (++)");
+                asm.WriteLine($"     INC DWORD[{v.getNombre()}]");
             }
             else if (Contenido == "--")
             {
                 match("--");
                 r = v.getValor() - 1;
                 v.setValor(r);
+                 asm.WriteLine("; Incremento termino (--)");
+                asm.WriteLine($"     DEC DWORD[{v.getNombre()}]");
             }
             else if (Contenido == "=")
             {
@@ -356,51 +362,59 @@ namespace ASM
                 match("+=");
                 Expresion();
                 r = v.getValor() + s.Pop();
-                asm.WriteLine("     POP");
+                asm.WriteLine("     POP EAX");
                 if (ejecuta)
                 {
                     v.setValor(r);
                 }
+                asm.WriteLine("; Incremento Factor (+=)");
+                asm.WriteLine($"     ADD DWORD[{v.getNombre()}], EAX");
             }
             else if (Contenido == "-=")
             {
                 match("-=");
                 Expresion();
                 r = v.getValor() - s.Pop();
-                asm.WriteLine("     POP");
+                asm.WriteLine("     POP EAX");
                 if (ejecuta)
                 {
                     v.setValor(r);
                 }
+                asm.WriteLine("; Incremento Factor (-=)");
+                asm.WriteLine($"     SUB DWORD[{v.getNombre()}], EAX");
             }
             else if (Contenido == "*=")
             {
                 match("*=");
                 Expresion();
                 r = v.getValor() * s.Pop();
-                asm.WriteLine("     POP");
+                asm.WriteLine("     POP EAX");
                 if (ejecuta)
                 {
                     v.setValor(r);
                 }
+                asm.WriteLine("; Incremento Factor (*=)");
+                //asm.WriteLine($"     MUL DWORD[{v.getNombre()}], EAX");
             }
             else if (Contenido == "/=")
             {
                 match("/=");
                 Expresion();
                 r = v.getValor() / s.Pop();
-                asm.WriteLine("     POP");
+                asm.WriteLine("     POP EAX");
                 if (ejecuta)
                 {
                     v.setValor(r);
                 }
+                asm.WriteLine("; Incremento Factor (/=)");
+                //asm.WriteLine($"     DIV DWORD[{v.getNombre()}], EAX");
             }
             else if (Contenido == "%=")
             {
                 match("%=");
                 Expresion();
                 r = v.getValor() % s.Pop();
-                asm.WriteLine("     POP");
+                asm.WriteLine("     POP EAX");
                 if (ejecuta)
                 {
                     v.setValor(r);
@@ -512,7 +526,7 @@ namespace ASM
         {
             match("do");
             asm.WriteLine("\t; do");
-            string label = $"jmp_DO_ {doWhileCont++} ";
+            string label = $"jmp_DO_{doWhileCont++}";
             asm.WriteLine($"{label}:");
             if (Contenido == "{")
             {

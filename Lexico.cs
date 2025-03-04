@@ -114,6 +114,7 @@ namespace ASM
         public void Dispose()
         {
             archivo.Close();
+
             log.Close();
             asm.Close();
         }

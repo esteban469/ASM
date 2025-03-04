@@ -6,31 +6,34 @@ using System.Threading.Tasks;
 static void Main(string[] args)
 {
   int x26 = 200;
-
-  do{
-    x26 = x26 +1;
-  } while (x26 < 211);
+  x26++;
+  x26++;
+  x26+=10; // x26 = x26 + 10
+  x26-=10;
+  x26*=2;
+  x26/=2;
+  x26--;
 
   /*if (1 > 2){
     x26 = 100;
   }
-  
+
   if (1 >= 2){
     x26 = 100;
   }
-  
+
   if (2 < 1){
     x26 = 100;
   }
-  
+
   if (2 <= 1){
     x26 = 100;
   }
-  
+
   if (1 == 2){
     x26 = 100;
   }
-  
+
   if (1 != 2){ // true
     x26 = 300;
   }

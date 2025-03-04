@@ -1,5 +1,5 @@
 ;Archivo: prueba.cpp
-;Fecha y hora: 28/02/2025 11:52:40 a. m.
+;Fecha y hora: 04/03/2025 11:46:51 a. m.
 segment .text
 global main
 main:
@@ -8,27 +8,32 @@ main:
      PUSH EAX
      POP EAX
      MOV DWORD[x26],EAX
-	; do
-jmp_DO_ 1 :
-    ;Asignacion de x26
-     MOV EAX,x26
-     PUSH EAX
-     MOV EAX,1
-     PUSH EAX
-     POP EBX
-     POP EAX
-     ADD EAX, EBX
+; Incremento termino (++)
+     INC DWORD[x26]
+; Incremento termino (++)
+     INC DWORD[x26]
+     MOV EAX,10
      PUSH EAX
      POP EAX
-     MOV DWORD[x26],EAX
-     MOV EAX,x26
+; Incremento Factor (+=)
+     ADD DWORD[x26], EAX
+     MOV EAX,10
      PUSH EAX
-     MOV EAX,211
-     PUSH EAX
-     POP EBX
      POP EAX
-     CMP EAX, EBX
-     JB jmp_DO_ 1 
+; Incremento Factor (-=)
+     SUB DWORD[x26], EAX
+     MOV EAX,2
+     PUSH EAX
+     POP EAX
+; Incremento Factor (*=)
+     MUL DWORD[x26], EAX
+     MOV EAX,2
+     PUSH EAX
+     POP EAX
+; Incremento Factor (/=)
+     DIV DWORD[x26], EAX
+; Incremento termino (--)
+     DEC DWORD[x26]
 	RET
 section .data
-    x26 DB 0
+    x26 DD 0

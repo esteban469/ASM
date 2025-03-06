@@ -5,14 +5,10 @@ using System.Threading.Tasks;
 
 static void Main(string[] args)
 {
-  int x26 = 200;
-  x26++;
-  x26++;
-  x26+=10; // x26 = x26 + 10
-  x26-=10;
+  float x26 = 200;
   x26*=2;
   x26/=2;
-  x26--;
+  Console.WriteLine(x26);
 
   /*if (1 > 2){
     x26 = 100;

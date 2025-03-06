@@ -35,8 +35,8 @@ NUEVOS REQUERIMIENTOS AUTOMATAS I:
     -----------------------------REQUERIMIENTOS Parcial 2-----------------------------
     1) Declarar las variables en ensamblador con su tipo de dato [LISTO]
     2) En asignacion generar codigo en ensamblador para ++(inc) --(dec) [LISTO]
-    3) En asignacion generar codigo en ensamblador para += -= *= /= %= [LISTO]
-    4) Generar codigo en ensamblador para console.Write/WriteLine
+    3) En asignacion generar codigo en ensamblador para += -= *= /= [LISTO] , *****FALTA %=****
+    4) Generar codigo en ensamblador para console.Write/WriteLine [Listo]
     5) Generar codigo para Console.Read/ReadLine
     6) Programar el do while
     7) Programar el while
@@ -97,6 +97,7 @@ namespace ASM
             {
                 log.WriteLine($"{elemento.getNombre()} {elemento.getTipoDato()} {elemento.getValor()}");
                 asm.WriteLine($"    {elemento.getNombre()} DD 0"); //{elemento.getValor()}");
+                asm.WriteLine($"    format db \"{elemento.getNombre()} = %d\" , 10, 0");// Formato para imprimir el valor de la variable
             }
         }
 
@@ -178,7 +179,7 @@ namespace ASM
                     {
                         match("Read");
                         int r = Console.Read();
-                        v.setValor(r); // Asignamos el último valor leído a la última variable detectada
+                        v.setValor(r);
                     }
                     else
                     {
@@ -310,7 +311,7 @@ namespace ASM
                 match("--");
                 r = v.getValor() - 1;
                 v.setValor(r);
-                 asm.WriteLine("; Incremento termino (--)");
+                asm.WriteLine("; Incremento termino (--)");
                 asm.WriteLine($"     DEC DWORD[{v.getNombre()}]");
             }
             else if (Contenido == "=")
@@ -367,7 +368,7 @@ namespace ASM
                 {
                     v.setValor(r);
                 }
-                asm.WriteLine("; Incremento Factor (+=)");
+                asm.WriteLine("; (+=)");
                 asm.WriteLine($"     ADD DWORD[{v.getNombre()}], EAX");
             }
             else if (Contenido == "-=")
@@ -380,7 +381,7 @@ namespace ASM
                 {
                     v.setValor(r);
                 }
-                asm.WriteLine("; Incremento Factor (-=)");
+                asm.WriteLine("; (-=)");
                 asm.WriteLine($"     SUB DWORD[{v.getNombre()}], EAX");
             }
             else if (Contenido == "*=")
@@ -393,21 +394,24 @@ namespace ASM
                 {
                     v.setValor(r);
                 }
-                asm.WriteLine("; Incremento Factor (*=)");
-                //asm.WriteLine($"     MUL DWORD[{v.getNombre()}], EAX");
+                asm.WriteLine("; (*=)");
+                asm.WriteLine($"     MUL DWORD[{v.getNombre()}]");
+                asm.WriteLine($"     MOV DWORD[{v.getNombre()}], EAX");
             }
             else if (Contenido == "/=")
             {
                 match("/=");
                 Expresion();
                 r = v.getValor() / s.Pop();
-                asm.WriteLine("     POP EAX");
+                asm.WriteLine("     POP EBX");
                 if (ejecuta)
                 {
                     v.setValor(r);
                 }
-                asm.WriteLine("; Incremento Factor (/=)");
-                //asm.WriteLine($"     DIV DWORD[{v.getNombre()}], EAX");
+                asm.WriteLine("; (/=)");
+                asm.WriteLine($"     MOV EAX,DWORD[{v.getNombre()}]");
+                asm.WriteLine($"     DIV EBX");
+                asm.WriteLine($"     MOV DWORD[{v.getNombre()}],EAX");
             }
             else if (Contenido == "%=")
             {
@@ -419,6 +423,11 @@ namespace ASM
                 {
                     v.setValor(r);
                 }
+                asm.WriteLine("; (%=)");
+                asm.WriteLine("      MOV EDX,0");
+                //asm.WriteLine($"     MOV EAX,DWORD[{v?.getNombre()}]");
+                asm.WriteLine($"     DIV EAX");
+                asm.WriteLine($"     MOV DWORD[{v?.getNombre()}],EDX");
             }
             //displayStack();
         }
@@ -589,6 +598,19 @@ namespace ASM
                 concatenaciones = Contenido.Trim('"');
                 match(Tipos.Cadena);
             }
+            else
+            {
+                Variable? v = l.Find(var => var.getNombre() == Contenido);
+                if (v == null)
+                {
+                    throw new Error("Sintaxis: La variable " + Contenido + " no está definida", log, linea, columna);
+                }
+                else
+                {
+                    concatenaciones = v.getValor().ToString();
+                    match(Tipos.Identificador);
+                }
+            }
 
             if (Contenido == "+")
             {
@@ -609,6 +631,12 @@ namespace ASM
                     Console.Write(concatenaciones);
                 }
             }
+            asm.WriteLine("     ; Console.WriteLine");
+            asm.WriteLine($"     PUSH DWORD {concatenaciones}");
+            asm.WriteLine("     PUSH format");
+            asm.WriteLine("     CALL printf");
+            asm.WriteLine("     ADD ESP, 8");
+
         }
         // Concatenaciones -> Identificador|Cadena ( + concatenaciones )?
         private string Concatenaciones()

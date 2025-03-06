@@ -103,6 +103,7 @@ namespace ASM
                 // Encabezado ensamblador
                 asm.WriteLine("segment .text");
                 asm.WriteLine("global main");
+                asm.WriteLine("extern printf");
                 asm.WriteLine("main:");
 
             }

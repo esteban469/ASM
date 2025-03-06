@@ -35,10 +35,10 @@ NUEVOS REQUERIMIENTOS AUTOMATAS I:
     -----------------------------REQUERIMIENTOS Parcial 2-----------------------------
     1) Declarar las variables en ensamblador con su tipo de dato [LISTO]
     2) En asignacion generar codigo en ensamblador para ++(inc) --(dec) [LISTO]
-    3) En asignacion generar codigo en ensamblador para += -= *= /= [LISTO] , *****FALTA %=****
+    3) En asignacion generar codigo en ensamblador para += -= *= /= [LISTO] , !!!!!FALTA %=!!!!!!!
     4) Generar codigo en ensamblador para console.Write/WriteLine [Listo]
-    5) Generar codigo para Console.Read/ReadLine
-    6) Programar el do while
+    5) Generar codigo para Console.Read/ReadLine [LISTO]
+    6) Programar el do while [LISTO]
     7) Programar el while
     8) Programar el for
     9) Condicionar todos los setValor() en asignacion {if(ejecuta)} [LISTO]
@@ -97,8 +97,8 @@ namespace ASM
             {
                 log.WriteLine($"{elemento.getNombre()} {elemento.getTipoDato()} {elemento.getValor()}");
                 asm.WriteLine($"    {elemento.getNombre()} DD 0"); //{elemento.getValor()}");
-                asm.WriteLine($"    format db \"{elemento.getNombre()} = %d\" , 10, 0");// Formato para imprimir el valor de la variable
             }
+            asm.WriteLine("    format db \"%d\" , 10, 0");// Formato para imprimir el valor de la variable
         }
 
         //Programa  -> Librerias? Variables? Main
@@ -196,6 +196,8 @@ namespace ASM
                     }
                     match("(");
                     match(")");
+                    asm.WriteLine($"    ;Asignacion de {v.getNombre()} desde Console");
+                    asm.WriteLine($"    MOV DWORD[{v.getNombre()}],{v.getValor()}");
                 }
                 else
                 {
@@ -331,19 +333,22 @@ namespace ASM
                     {
                         match("ReadLine");
                         match("(");
+                        Console.Write($"Ingrese el valor de [{v.getNombre()}]: ");
                         string? lineaLeida = Console.ReadLine();
                         if (!float.TryParse(lineaLeida, out float numero))
                         {
                             throw new Error("Entrada invalida: Solo se permiten numeros enteros.");
                         }
                         s.Push(numero);
-                        asm.WriteLine("     PUSH");
+                        //asm.WriteLine("     PUSH EAX");
                         if (ejecuta)
                         {
                             v?.setValor(numero, maxTipo);
                         }
                     }
                     match(")");
+                    asm.WriteLine($"    ;Asignacion de {v?.getNombre()} con Console.ReadLine");
+                    asm.WriteLine($"     MOV DWORD[{v?.getNombre()}],EAX");
                 }
                 else
                 {
@@ -633,9 +638,9 @@ namespace ASM
             }
             asm.WriteLine("     ; Console.WriteLine");
             asm.WriteLine($"     PUSH DWORD {concatenaciones}");
-            asm.WriteLine("     PUSH format");
-            asm.WriteLine("     CALL printf");
-            asm.WriteLine("     ADD ESP, 8");
+            asm.WriteLine("     PUSH format"); //Pasar el formato de impresion
+            asm.WriteLine("     CALL printf"); 
+            asm.WriteLine("     ADD ESP, 8");//  Limpiar la pila
 
         }
         // Concatenaciones -> Identificador|Cadena ( + concatenaciones )?

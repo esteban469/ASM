@@ -1,5 +1,5 @@
 ;Archivo: prueba.cpp
-;Fecha y hora: 06/03/2025 01:34:46 p. m.
+;Fecha y hora: 06/03/2025 03:28:02 p. m.
 segment .text
 global main
 extern printf
@@ -27,7 +27,15 @@ main:
      PUSH format
      CALL printf
      ADD ESP, 8
+    ;Asignacion de a con Console.ReadLine
+     MOV DWORD[a],EAX
+     ; Console.WriteLine
+     PUSH DWORD 2
+     PUSH format
+     CALL printf
+     ADD ESP, 8
 	RET
 section .data
     x26 DD 0
-    format db "x26 = %d" , 10, 0
+    a DD 0
+    format db "%d" , 10, 0

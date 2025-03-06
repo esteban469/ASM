@@ -40,7 +40,6 @@ namespace ASM
             }
             else
             {
-                Console.WriteLine("Este se esta ejecutando");
                 throw new Error("Semántico: no se puede asignar un " + maxTipo + " a un " + tipo + " en: [" + Lexico.linea + "," + Lexico.columna + "]");
             }
         }

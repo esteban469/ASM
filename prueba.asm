@@ -1,5 +1,5 @@
 ;Archivo: prueba.cpp
-;Fecha y hora: 06/03/2025 03:28:02 p. m.
+;Fecha y hora: 06/03/2025 09:57:39 p. m.
 segment .text
 global main
 extern printf
@@ -22,20 +22,27 @@ main:
      MOV EAX,DWORD[x26]
      DIV EBX
      MOV DWORD[x26],EAX
-     ; Console.WriteLine
+     ; Console.WriteLine VARIABLE
      PUSH DWORD 200
-     PUSH format
+     PUSH format_Num
      CALL printf
      ADD ESP, 8
     ;Asignacion de a con Console.ReadLine
      MOV DWORD[a],EAX
-     ; Console.WriteLine
-     PUSH DWORD 2
-     PUSH format
+     ; Console.WriteLine VARIABLE
+     PUSH DWORD 43
+     PUSH format_Num
+     CALL printf
+     ADD ESP, 8
+     ; Console.WriteLine CADENA
+     PUSH cadena
+     PUSH format_Str
      CALL printf
      ADD ESP, 8
 	RET
 section .data
     x26 DD 0
     a DD 0
-    format db "%d" , 10, 0
+    format_Num db "%d" , 10, 0
+    cadena db"Hello World!", 0
+    format_Str db "%s" , 10, 0

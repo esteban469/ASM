@@ -12,6 +12,7 @@ static void Main(string[] args)
   Console.WriteLine(x26);
   a = Console.ReadLine();
   Console.WriteLine(a);
+  Console.WriteLine("Hello World!");
 
   /*if (1 > 2){
     x26 = 100;

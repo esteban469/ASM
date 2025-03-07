@@ -63,6 +63,7 @@ namespace ASM
         Stack<float> s;
         List<Variable> l;
         Variable.TipoDato maxTipo;
+        private string concatenaciones = "";
         public Lenguaje() : base()
         {
             s = new Stack<float>();
@@ -98,7 +99,9 @@ namespace ASM
                 log.WriteLine($"{elemento.getNombre()} {elemento.getTipoDato()} {elemento.getValor()}");
                 asm.WriteLine($"    {elemento.getNombre()} DD 0"); //{elemento.getValor()}");
             }
-            asm.WriteLine("    format db \"%d\" , 10, 0");// Formato para imprimir el valor de la variable
+            asm.WriteLine("    format_Num db \"%d\" , 10, 0");// Formato para imprimir el valor de la variable (numero)
+            asm.WriteLine($"    cadena db\"{concatenaciones}\", 0");// Mensaje a imprimir
+            asm.WriteLine("    format_Str db \"%s\" , 10, 0");// Formato para imprimir el valor de la variable (cadena)
         }
 
         //Programa  -> Librerias? Variables? Main
@@ -333,7 +336,7 @@ namespace ASM
                     {
                         match("ReadLine");
                         match("(");
-                        Console.Write($"Ingrese el valor de [{v.getNombre()}]: ");
+                        Console.Write("--> ");
                         string? lineaLeida = Console.ReadLine();
                         if (!float.TryParse(lineaLeida, out float numero))
                         {
@@ -596,12 +599,17 @@ namespace ASM
 
             match("(");
 
-            string concatenaciones = "";
+            concatenaciones = "";
 
             if (Clasificacion == Tipos.Cadena)
             {
                 concatenaciones = Contenido.Trim('"');
                 match(Tipos.Cadena);
+                asm.WriteLine("     ; Console.WriteLine CADENA");
+                asm.WriteLine($"     PUSH cadena");
+                asm.WriteLine("     PUSH format_Str"); //Pasar el formato de impresion
+                asm.WriteLine("     CALL printf");
+                asm.WriteLine("     ADD ESP, 8");//  Limpiar la pila
             }
             else
             {
@@ -614,6 +622,11 @@ namespace ASM
                 {
                     concatenaciones = v.getValor().ToString();
                     match(Tipos.Identificador);
+                    asm.WriteLine("     ; Console.WriteLine VARIABLE");
+                    asm.WriteLine($"     PUSH DWORD {concatenaciones}");
+                    asm.WriteLine("     PUSH format_Num"); //Pasar el formato de impresion
+                    asm.WriteLine("     CALL printf");
+                    asm.WriteLine("     ADD ESP, 8");//  Limpiar la pila
                 }
             }
 
@@ -636,11 +649,7 @@ namespace ASM
                     Console.Write(concatenaciones);
                 }
             }
-            asm.WriteLine("     ; Console.WriteLine");
-            asm.WriteLine($"     PUSH DWORD {concatenaciones}");
-            asm.WriteLine("     PUSH format"); //Pasar el formato de impresion
-            asm.WriteLine("     CALL printf"); 
-            asm.WriteLine("     ADD ESP, 8");//  Limpiar la pila
+
 
         }
         // Concatenaciones -> Identificador|Cadena ( + concatenaciones )?

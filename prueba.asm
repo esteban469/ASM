@@ -1,5 +1,5 @@
-;Archivo: prueba.cpp
-;Fecha y hora: 06/03/2025 09:57:39 p. m.
+;Archivo: Prueba.cpp
+;Fecha y hora: 07/03/2025 11:20:17 a. m.
 segment .text
 global main
 extern printf
@@ -30,7 +30,7 @@ main:
     ;Asignacion de a con Console.ReadLine
      MOV DWORD[a],EAX
      ; Console.WriteLine VARIABLE
-     PUSH DWORD 43
+     PUSH DWORD 22
      PUSH format_Num
      CALL printf
      ADD ESP, 8

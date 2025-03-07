@@ -44,7 +44,7 @@ NUEVOS REQUERIMIENTOS AUTOMATAS I:
     9) Condicionar todos los setValor() en asignacion {if(ejecuta)} [LISTO]
     10) Pogramar el else
     11) Usar set y get en variable
-    12) Ajustar todos los constructores con parametros por default
+    12) Ajustar todos los constructores con parametros por default [LISTO]
     ***********************************************************************************
 */
 
@@ -64,15 +64,15 @@ namespace ASM
         List<Variable> l;
         Variable.TipoDato maxTipo;
         private string concatenaciones = "";
-        public Lenguaje() : base()
+        /*public Lenguaje() : base()
         {
             s = new Stack<float>();
             l = new List<Variable>();
             maxTipo = Variable.TipoDato.Char;
             log.WriteLine("Constructor lenguaje");
             ifCont = whileCont = doWhileCont = forCont = 1;
-        }
-        public Lenguaje(string nombre) : base(nombre)
+        }*/
+        public Lenguaje(string nombre = "Prueba.cpp") : base(nombre)
         {
             s = new Stack<float>();
             l = new List<Variable>();

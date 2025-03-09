@@ -40,9 +40,9 @@ NUEVOS REQUERIMIENTOS AUTOMATAS I:
     5) Generar codigo para Console.Read/ReadLine [LISTO]
     6) Programar el do while [LISTO]
     7) Programar el while [LISTO]
-    8) Programar el for
+    8) Programar el for [LISTO]
     9) Condicionar todos los setValor() en asignacion {if(ejecuta)} [LISTO]
-    10) Pogramar el else
+    10) Pogramar el else [LISTO]
     11) Usar set y get en variable
     12) Ajustar todos los constructores con parametros por default [LISTO]
     ***********************************************************************************
@@ -59,11 +59,15 @@ namespace ASM
 {
     public class Lenguaje : Sintaxis
     {
-        private int ifCont, whileCont, doWhileCont, forCont;
+        private int ifCont, whileCont, doWhileCont, forCont, ContCadenasConsoleASM=1, Cont2CadenasConsoleASM=1
+                    , continueWhileCont=1, continueForCont=1, continueIfCont=1;
         Stack<float> s;
         List<Variable> l;
         Variable.TipoDato maxTipo;
         private string concatenaciones = "";
+        public static bool printNumberAsm = false;
+        public static bool printStringAsm = false;
+        List<string> cadenasASM = new List<string>();
         /*public Lenguaje() : base()
         {
             s = new Stack<float>();
@@ -99,9 +103,18 @@ namespace ASM
                 log.WriteLine($"{elemento.getNombre()} {elemento.getTipoDato()} {elemento.getValor()}");
                 asm.WriteLine($"    {elemento.getNombre()} DD 0"); //{elemento.getValor()}");
             }
-            asm.WriteLine("    format_Num db \"%d\" , 10, 0");// Formato para imprimir el valor de la variable (numero)
-            asm.WriteLine($"    cadena db \"{concatenaciones}\", 0");// Mensaje a imprimir
-            asm.WriteLine("    format_Str db \"%s\" , 10, 0");// Formato para imprimir el valor de la variable (cadena)
+            if (printNumberAsm == true)
+            {
+                asm.WriteLine("    format_Num db \"%d\" , 10, 0");// Formato para imprimir el valor de la variable (numero)
+            }
+            if (printStringAsm == true)
+            {
+                asm.WriteLine("    format_Str db \"%s\" , 10, 0");// Formato para imprimir el valor de la variable (cadena)
+                foreach (string cadenaConsole in cadenasASM)
+                {
+                    asm.WriteLine($"    cadena_{ContCadenasConsoleASM++} db \"{cadenaConsole}\", 0");// Mensaje a imprimir
+                }
+            }
         }
 
         //Programa  -> Librerias? Variables? Main
@@ -445,10 +458,10 @@ namespace ASM
         {
             match("if");
             match("(");
-            asm.WriteLine("\t; if");
-            string label = $"jmp_IF_ {ifCont++} ";
-
-            bool ejecuta = Condicion("") && ejecuta2;// temporalmente se pone cadena vacia
+            asm.WriteLine("\t; Entrando al IF");
+            string label = $"jmp_Else_{ifCont++}";
+            string labelFalse = $"jmp_Continue_If_{continueIfCont++}";
+            bool ejecuta = Condicion(label,false) && ejecuta2;
             //Console.WriteLine(ejecuta);
             match(")");
             if (Contenido == "{")
@@ -459,6 +472,7 @@ namespace ASM
             {
                 Instruccion(ejecuta);
             }
+            asm.WriteLine($"    JMP {labelFalse}");
             asm.WriteLine($"{label}:");
             if (Contenido == "else")
             {
@@ -472,6 +486,7 @@ namespace ASM
                 {
                     Instruccion(ejecutarElse);
                 }
+                asm.WriteLine($"{labelFalse}:");
             }
         }
         //Condicion -> Expresion operadorRelacional Expresion
@@ -500,7 +515,7 @@ namespace ASM
                     default: asm.WriteLine($"     JE {label}"); return valor1 != valor2;// ==
                 }
             }
-            else 
+            else
             {
                 switch (operador)
                 {
@@ -518,11 +533,11 @@ namespace ASM
         {
             asm.WriteLine("\t; while");
             string label = $"While_{whileCont++}";
-            string labelFalse = "jmp_While_False";
+            string labelFalse = $"jmp_Continue_While_{continueWhileCont++}";
             asm.WriteLine($"{label}:");
             match("while");
             match("(");
-            Condicion(labelFalse,false);
+            Condicion(labelFalse, false);
             match(")");
             if (Contenido == "{")
             {
@@ -561,11 +576,15 @@ namespace ASM
         BloqueInstrucciones | Intruccion*/
         private void For(bool ejecuta)
         {
+            asm.WriteLine("\t; for");
+            string label = $"For_{forCont++}";
+            string labelFalse = $"jmp_Continue_For_{continueForCont++}";
             match("for");
             match("(");
             Asignacion(ejecuta);
             match(";");
-            Condicion("");
+            asm.WriteLine($"{label}:");
+            Condicion(labelFalse, false);
             match(";");
             Asignacion(ejecuta);
             match(")");
@@ -577,6 +596,8 @@ namespace ASM
             {
                 Instruccion(true);
             }
+            asm.WriteLine($"     JMP {label}");
+            asm.WriteLine($"{labelFalse}:");
         }
         //Console -> Console.(WriteLine|Write) (cadena? concatenaciones?);
         private void console(bool ejecuta)
@@ -601,16 +622,19 @@ namespace ASM
 
             if (Clasificacion == Tipos.Cadena)
             {
+                printStringAsm = true;
                 concatenaciones = Contenido.Trim('"');
                 match(Tipos.Cadena);
                 asm.WriteLine("     ; Console.WriteLine CADENA");
-                asm.WriteLine($"     PUSH cadena");
+                asm.WriteLine($"     PUSH cadena_{Cont2CadenasConsoleASM++}"); //Pasar la cadena a imprimir
                 asm.WriteLine("     PUSH format_Str"); //Pasar el formato de impresion
                 asm.WriteLine("     CALL printf");
                 asm.WriteLine("     ADD ESP, 8");//  Limpiar la pila
+                cadenasASM.Add(concatenaciones);
             }
             else
             {
+                printNumberAsm = true;
                 Variable? v = l.Find(var => var.getNombre() == Contenido);
                 if (v == null)
                 {
@@ -632,6 +656,7 @@ namespace ASM
             {
                 match("+");
                 concatenaciones += Concatenaciones();  // Se acumula el resultado de las concatenaciones
+                //cadenasASM.Add(concatenaciones);
             }
 
             match(")");
@@ -647,8 +672,6 @@ namespace ASM
                     Console.Write(concatenaciones);
                 }
             }
-
-
         }
         // Concatenaciones -> Identificador|Cadena ( + concatenaciones )?
         private string Concatenaciones()

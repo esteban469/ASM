@@ -5,40 +5,68 @@ using System.Threading.Tasks;
 
 static void Main(string[] args)
 {
-  int i = 1;
+  int i = 2;
   int a=5;
-  while (i<a)
+
+  if(i>a)
   {
-    i++;
+    Console.WriteLine("La condicion es verdadera.");
   }
-  
+  else
+  {
+    Console.WriteLine("La condicion es falsa.");
+  }
+    /*int altura,i,j;
+    int x=0, y=10, z=2;
+    int c;
 
-  /*if (1 > 2){
-    x26 = 100;
-  }
+    c = (100+200);
+    c =  (100+200);
 
-  if (1 >= 2){
-    x26 = 100;
-  }
+    Console.WriteLine("Valor de altura = ");
+    altura = Console.ReadLine();
 
-  if (2 < 1){
-    x26 = 100;
-  }
+    x = (3 + altura) * 8 - (10 - 4) / 2; // = 61
+    x--;
+    x+=(altura*8);
+    x*=2;
+    x/=(y-6);
 
-  if (2 <= 1){
-    x26 = 100;
-  }
-
-  if (1 == 2){
-    x26 = 100;
-  }
-
-  if (1 != 2){ // true
-    x26 = 300;
-  }
+    for (i = 1; i<=altura; i++)
+    {
+        for (j = 1; j<=i; j++)
+        {
+            if (j/2==0){
+                Console.Write("*");
+            }
+        }
+        Console.WriteLine("");
+    }
+    i = 0;
+    do
+    {
+        Console.Write("-");
+        i++;
+    }
+    while (i<altura*2);
+    Console.WriteLine("");
+    for (i = 1; i<=altura; i++)
+    {
+        j = 1;
+        while (j<=i)
+        { 
+            Console.Write(""+j);
+            j++;
+        }
+        Console.WriteLine("");
+    }
+    i = 0;
+    do
+    {
+        Console.Write("-");
+        i++;
+    }
+    while (i<altura*2);
+    Console.WriteLine("");
     */
-  /*if((3 + 5) * 8 - (10 - 4) / 2 == 61)
-  {
-    x26 = 100;
-  }*/
 }

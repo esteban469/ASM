@@ -1,48 +1,37 @@
 ;Archivo: Prueba.cpp
-;Fecha y hora: 07/03/2025 11:20:17 a. m.
+;Fecha y hora: 08/03/2025 08:15:52 p. m.
 segment .text
 global main
 extern printf
 main:
-    ;Asignacion de x26
-     MOV EAX,200
+    ;Asignacion de i
+     MOV EAX, 1
      PUSH EAX
      POP EAX
-     MOV DWORD[x26],EAX
-     MOV EAX,2
+     MOV DWORD[i],EAX
+    ;Asignacion de a
+     MOV EAX, 5
      PUSH EAX
      POP EAX
-; (*=)
-     MUL DWORD[x26]
-     MOV DWORD[x26], EAX
-     MOV EAX,2
+     MOV DWORD[a],EAX
+	; while
+While_1:
+     MOV EAX, DWORD[i]
+     PUSH EAX
+     MOV EAX, DWORD[a]
      PUSH EAX
      POP EBX
-; (/=)
-     MOV EAX,DWORD[x26]
-     DIV EBX
-     MOV DWORD[x26],EAX
-     ; Console.WriteLine VARIABLE
-     PUSH DWORD 200
-     PUSH format_Num
-     CALL printf
-     ADD ESP, 8
-    ;Asignacion de a con Console.ReadLine
-     MOV DWORD[a],EAX
-     ; Console.WriteLine VARIABLE
-     PUSH DWORD 22
-     PUSH format_Num
-     CALL printf
-     ADD ESP, 8
-     ; Console.WriteLine CADENA
-     PUSH cadena
-     PUSH format_Str
-     CALL printf
-     ADD ESP, 8
+     POP EAX
+     CMP EAX, EBX
+     JAE jmp_While_False
+     ; Incremento termino (++)
+     INC DWORD[i]
+     JMP While_1
+jmp_While_False:
 	RET
 section .data
-    x26 DD 0
+    i DD 0
     a DD 0
     format_Num db "%d" , 10, 0
-    cadena db"Hello World!", 0
+    cadena db "", 0
     format_Str db "%s" , 10, 0

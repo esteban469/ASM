@@ -39,7 +39,7 @@ NUEVOS REQUERIMIENTOS AUTOMATAS I:
     4) Generar codigo en ensamblador para console.Write/WriteLine [Listo]
     5) Generar codigo para Console.Read/ReadLine [LISTO]
     6) Programar el do while [LISTO]
-    7) Programar el while
+    7) Programar el while [LISTO]
     8) Programar el for
     9) Condicionar todos los setValor() en asignacion {if(ejecuta)} [LISTO]
     10) Pogramar el else
@@ -100,7 +100,7 @@ namespace ASM
                 asm.WriteLine($"    {elemento.getNombre()} DD 0"); //{elemento.getValor()}");
             }
             asm.WriteLine("    format_Num db \"%d\" , 10, 0");// Formato para imprimir el valor de la variable (numero)
-            asm.WriteLine($"    cadena db\"{concatenaciones}\", 0");// Mensaje a imprimir
+            asm.WriteLine($"    cadena db \"{concatenaciones}\", 0");// Mensaje a imprimir
             asm.WriteLine("    format_Str db \"%s\" , 10, 0");// Formato para imprimir el valor de la variable (cadena)
         }
 
@@ -308,7 +308,7 @@ namespace ASM
                 match("++");
                 r = v.getValor() + 1;
                 v.setValor(r);
-                asm.WriteLine("; Incremento termino (++)");
+                asm.WriteLine("     ; Incremento termino (++)");
                 asm.WriteLine($"     INC DWORD[{v.getNombre()}]");
             }
             else if (Contenido == "--")
@@ -316,7 +316,7 @@ namespace ASM
                 match("--");
                 r = v.getValor() - 1;
                 v.setValor(r);
-                asm.WriteLine("; Incremento termino (--)");
+                asm.WriteLine("     ; Incremento termino (--)");
                 asm.WriteLine($"     DEC DWORD[{v.getNombre()}]");
             }
             else if (Contenido == "=")
@@ -496,15 +496,11 @@ namespace ASM
                     case ">=": asm.WriteLine($"     JB {label}"); return valor1 >= valor2;//<
                     case "<": asm.WriteLine($"     JAE {label}"); return valor1 < valor2;//>=
                     case "<=": asm.WriteLine($"     JA {label}"); return valor1 <= valor2;//>
-                    case "==":
-                        asm.WriteLine($"     JNE {label}");
-                        return valor1 == valor2;// distinto
-                    default:
-                        asm.WriteLine($"     JE {label}");
-                        return valor1 != valor2;// ==
+                    case "==": asm.WriteLine($"     JNE {label}"); return valor1 == valor2;// distinto
+                    default: asm.WriteLine($"     JE {label}"); return valor1 != valor2;// ==
                 }
             }
-            else
+            else 
             {
                 switch (operador)
                 {
@@ -512,21 +508,21 @@ namespace ASM
                     case ">=": asm.WriteLine($"     JAE {label}"); return valor1 >= valor2;
                     case "<": asm.WriteLine($"     JB {label}"); return valor1 < valor2;
                     case "<=": asm.WriteLine($"     JBE {label}"); return valor1 <= valor2;
-                    case "==":
-                        asm.WriteLine($"     JE {label}");
-                        return valor1 == valor2;
-                    default:
-                        asm.WriteLine($"     JNE {label}");
-                        return valor1 != valor2;
+                    case "==": asm.WriteLine($"     JE {label}"); return valor1 == valor2;
+                    default: asm.WriteLine($"     JNE {label}"); return valor1 != valor2;
                 }
             }
         }
         //While -> while(Condicion) bloqueInstrucciones | instruccion
         private void While()
         {
+            asm.WriteLine("\t; while");
+            string label = $"While_{whileCont++}";
+            string labelFalse = "jmp_While_False";
+            asm.WriteLine($"{label}:");
             match("while");
             match("(");
-            Condicion("");// temporalmente se pone cadena vacia
+            Condicion(labelFalse,false);
             match(")");
             if (Contenido == "{")
             {
@@ -536,6 +532,8 @@ namespace ASM
             {
                 Instruccion(true);
             }
+            asm.WriteLine($"     JMP {label}");
+            asm.WriteLine($"{labelFalse}:");
         }
         /*Do -> do bloqueInstrucciones | intruccion 
         while(Condicion);*/
@@ -782,7 +780,7 @@ namespace ASM
                 }
 
                 s.Push(float.Parse(Contenido));
-                asm.WriteLine("     MOV EAX," + Contenido);
+                asm.WriteLine($"     MOV EAX, " + Contenido);
                 asm.WriteLine("     PUSH EAX");
                 match(Tipos.Numero);
             }
@@ -801,7 +799,7 @@ namespace ASM
                 }
 
                 s.Push(v.getValor());
-                asm.WriteLine("     MOV EAX," + Contenido);
+                asm.WriteLine($"     MOV EAX, DWORD[{Contenido}]");
                 asm.WriteLine("     PUSH EAX");
                 match(Tipos.Identificador);
             }

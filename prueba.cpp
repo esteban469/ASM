@@ -5,14 +5,13 @@ using System.Threading.Tasks;
 
 static void Main(string[] args)
 {
-  float x26 = 200;
-  int a;
-  x26*=2;
-  x26/=2;
-  Console.WriteLine(x26);
-  a = Console.ReadLine();
-  Console.WriteLine(a);
-  Console.WriteLine("Hello World!");
+  int i = 1;
+  int a=5;
+  while (i<a)
+  {
+    i++;
+  }
+  
 
   /*if (1 > 2){
     x26 = 100;

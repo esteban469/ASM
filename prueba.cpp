@@ -8,14 +8,9 @@ static void Main(string[] args)
   int i = 2;
   int a=5;
 
-  if(i>a)
-  {
-    Console.WriteLine("La condicion es verdadera.");
-  }
-  else
-  {
-    Console.WriteLine("La condicion es falsa.");
-  }
+    Console.WriteLine("Hola Mundo");
+    Console.WriteLine("Hola Mundo: " + a);
+    Console.WriteLine("Hola Mundo: " + a + " valor i: " + i);
     /*int altura,i,j;
     int x=0, y=10, z=2;
     int c;

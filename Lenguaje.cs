@@ -68,6 +68,7 @@ namespace ASM
         public static bool printNumberAsm = false;
         public static bool printStringAsm = false;
         List<string> cadenasASM = new List<string>();
+        private string guardarConcat = "";
         /*public Lenguaje() : base()
         {
             s = new Stack<float>();
@@ -630,7 +631,8 @@ namespace ASM
                 asm.WriteLine("     PUSH format_Str"); //Pasar el formato de impresion
                 asm.WriteLine("     CALL printf");
                 asm.WriteLine("     ADD ESP, 8");//  Limpiar la pila
-                cadenasASM.Add(concatenaciones);
+                guardarConcat = concatenaciones;
+                //cadenasASM.Add(concatenaciones);
             }
             else
             {
@@ -656,9 +658,10 @@ namespace ASM
             {
                 match("+");
                 concatenaciones += Concatenaciones();  // Se acumula el resultado de las concatenaciones
+                guardarConcat = concatenaciones;
                 //cadenasASM.Add(concatenaciones);
             }
-
+            cadenasASM.Add(guardarConcat);
             match(")");
             match(";");
             if (ejecuta)

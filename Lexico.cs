@@ -101,9 +101,9 @@ namespace ASM
                 asm.WriteLine(";Archivo: " + nombreArchivo);
                 asm.WriteLine(";Fecha y hora: " + ahora.ToString());
                 // Encabezado ensamblador
+                asm.WriteLine("%include \"io.inc\"");
                 asm.WriteLine("segment .text");
                 asm.WriteLine("global main");
-                asm.WriteLine("extern printf");
                 asm.WriteLine("main:");
 
             }

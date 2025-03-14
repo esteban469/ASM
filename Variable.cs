@@ -11,39 +11,34 @@ namespace ASM
         {
             Char, Int, Float
         }
-        TipoDato tipo;
-        string nombre;
-        float valor;
+
+        private TipoDato tipo;
+        private string nombre;
+        private float valor;
+
         public Variable(TipoDato tipo, string nombre, float valor = 0)
         {
             this.tipo = tipo;
             this.nombre = nombre;
             this.valor = valor;
         }
-
-        public void setValor(float valor)
+        public float Valor
         {
-            if (valorToTipoDato(valor) <= tipo)
+            get => valor;
+            set
             {
-                this.valor = valor;
-            }
-            else
-            {
-                throw new Error("Semántico: no se puede asignar un " + valorToTipoDato(valor) + " a un " + tipo + " en: [" + Lexico.linea + "," + Lexico.columna + "]");
+                if (valorToTipoDato(value) <= tipo)
+                {
+                    valor = value;
+                }
+                else
+                {
+                    throw new Exception($"Semántico: no se puede asignar un {valorToTipoDato(value)} a un {tipo} en: [{Lexico.linea},{Lexico.columna}]");
+                }
             }
         }
-        public void setValor(float valor, TipoDato maxTipo)
-        {
-            if (maxTipo <= tipo)
-            {
-                this.valor = valor;
-            }
-            else
-            {
-                throw new Error("Semántico: no se puede asignar un " + maxTipo + " a un " + tipo + " en: [" + Lexico.linea + "," + Lexico.columna + "]");
-            }
-        }
-
+        public string Nombre => nombre;
+        public TipoDato Tipo => tipo;
         public static TipoDato valorToTipoDato(float valor)
         {
             if (!float.IsInteger(valor))
@@ -62,20 +57,6 @@ namespace ASM
             {
                 return TipoDato.Float;
             }
-        }
-
-
-        public float getValor()
-        {
-            return valor;
-        }
-        public string getNombre()
-        {
-            return nombre;
-        }
-        public TipoDato getTipoDato()
-        {
-            return tipo;
         }
     }
 }

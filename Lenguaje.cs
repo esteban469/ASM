@@ -24,18 +24,18 @@ NUEVOS REQUERIMIENTOS AUTOMATAS I:
 
 
 
-    ***********************REQUERIMIENTOS AUTOMATAS II:********************************
+    **********************REQUERIMIENTOS AUTOMATAS II:*******************************
     1) Implementar set y get para la clase token (listo)
     2) Implementar parametros por default en el constructor del archivo lexico (listo)
     3) Implementar linea y columna en los errores semanticos[Listo]
-    4) Implementar maxTipo en la asignacion, es decir, cuando se haga v.setValor(r)
+    4) Implementar maxTipo en la asignacion, es decir, cuando se haga v.Valor = r;
     5) Implementar el casteo en el stack
 
 
     -----------------------------REQUERIMIENTOS Parcial 2-----------------------------
     1) Declarar las variables en ensamblador con su tipo de dato [LISTO]
     2) En asignacion generar codigo en ensamblador para ++(inc) --(dec) [LISTO]
-    3) En asignacion generar codigo en ensamblador para += -= *= /= [LISTO] , !!!!!FALTA %=!!!!!!!
+    3) En asignacion generar codigo en ensamblador para += -= *= /= [LISTO] ,
     4) Generar codigo en ensamblador para console.Write/WriteLine [Listo]
     5) Generar codigo para Console.Read/ReadLine [LISTO]
     6) Programar el do while [LISTO]
@@ -59,24 +59,13 @@ namespace ASM
 {
     public class Lenguaje : Sintaxis
     {
-        private int ifCont, whileCont, doWhileCont, forCont, ContCadenasConsoleASM=1, Cont2CadenasConsoleASM=1
-                    , continueWhileCont=1, continueForCont=1, continueIfCont=1;
+        private int ifCont, whileCont, doWhileCont, forCont, CountCadenasConsoleASM = 1, continueWhileCont = 1, continueForCont = 1;
         Stack<float> s;
         List<Variable> l;
         Variable.TipoDato maxTipo;
         private string concatenaciones = "";
-        public static bool printNumberAsm = false;
-        public static bool printStringAsm = false;
         List<string> cadenasASM = new List<string>();
-        private string guardarConcat = "";
-        /*public Lenguaje() : base()
-        {
-            s = new Stack<float>();
-            l = new List<Variable>();
-            maxTipo = Variable.TipoDato.Char;
-            log.WriteLine("Constructor lenguaje");
-            ifCont = whileCont = doWhileCont = forCont = 1;
-        }*/
+
         public Lenguaje(string nombre = "Prueba.cpp") : base(nombre)
         {
             s = new Stack<float>();
@@ -101,21 +90,22 @@ namespace ASM
             log.WriteLine("Lista de variables: ");
             foreach (Variable elemento in l)
             {
-                log.WriteLine($"{elemento.getNombre()} {elemento.getTipoDato()} {elemento.getValor()}");
-                asm.WriteLine($"    {elemento.getNombre()} DD 0"); //{elemento.getValor()}");
+                log.WriteLine($"{elemento.Nombre} {elemento.Tipo} {elemento.Valor}");
+                asm.WriteLine($"    {elemento.Nombre} DD 0"); //{elemento.Valor}");
             }
-            if (printNumberAsm == true)
+
+            foreach (string cadenaConsole in cadenasASM)
             {
-                asm.WriteLine("    format_Num db \"%d\" , 10, 0");// Formato para imprimir el valor de la variable (numero)
-            }
-            if (printStringAsm == true)
-            {
-                asm.WriteLine("    format_Str db \"%s\" , 10, 0");// Formato para imprimir el valor de la variable (cadena)
-                foreach (string cadenaConsole in cadenasASM)
+                if (cadenaConsole == "" || string.IsNullOrEmpty(cadenaConsole))
                 {
-                    asm.WriteLine($"    cadena_{ContCadenasConsoleASM++} db \"{cadenaConsole}\", 0");// Mensaje a imprimir
+                    asm.WriteLine($"    cadena_{CountCadenasConsoleASM++} db \" \", 0");// Mensaje a imprimir si es cadena vacia
+                }
+                else
+                {
+                    asm.WriteLine($"    cadena_{CountCadenasConsoleASM++} db \"{cadenaConsole}\", 0");// Mensaje a imprimir
                 }
             }
+
         }
 
         //Programa  -> Librerias? Variables? Main
@@ -176,7 +166,7 @@ namespace ASM
         //ListaIdentificadores -> identificador (= Expresion)? (,ListaIdentificadores)?
         private void ListaIdentificadores(bool ejecuta, Variable.TipoDato t)
         {
-            if (l.Find(variable => variable.getNombre() == Contenido) != null)
+            if (l.Find(variable => variable.Nombre == Contenido) != null)
             {
                 throw new Error($"La variable {Contenido} ya existe", log, linea, columna);
             }
@@ -196,7 +186,7 @@ namespace ASM
                     {
                         match("Read");
                         int r = Console.Read();
-                        v.setValor(r);
+                        v.Valor = r; ;
                     }
                     else
                     {
@@ -204,7 +194,7 @@ namespace ASM
                         string? r = Console.ReadLine();
                         if (float.TryParse(r, out float valor))
                         {
-                            v.setValor(valor);
+                            v.Valor = valor;
                         }
                         else
                         {
@@ -213,18 +203,18 @@ namespace ASM
                     }
                     match("(");
                     match(")");
-                    asm.WriteLine($"    ;Asignacion de {v.getNombre()} desde Console");
-                    asm.WriteLine($"    MOV DWORD[{v.getNombre()}],{v.getValor()}");
+                    asm.WriteLine($"    ;Asignacion de {v.Nombre} desde Console");
+                    asm.WriteLine($"    MOV DWORD[{v.Nombre}],{v.Valor}");
                 }
                 else
                 {
                     // Como no se ingresó un número desde el Console, entonces viene de una expresión matemática
-                    asm.WriteLine($"    ;Asignacion de {v.getNombre()}");
+                    asm.WriteLine($"    ;Asignacion de {v.Nombre}");
                     Expresion();
                     float resultado = s.Pop();
                     asm.WriteLine("     POP EAX");
-                    asm.WriteLine($"     MOV DWORD[{v.getNombre()}],EAX");
-                    l.Last().setValor(resultado);
+                    asm.WriteLine($"     MOV DWORD[{v.Nombre}],EAX");
+                    l.Last().Valor = resultado;
                 }
             }
             if (Contenido == ",")
@@ -303,12 +293,12 @@ namespace ASM
         Id = Console.ReadLine() (DONE)
         */
 
-        //4) Implementar maxTipo en la asignacion, es decir, cuando se haga v.setValor(r)
+        //4) Implementar maxTipo en la asignacion, es decir, cuando se haga v.Valor = r;
         private void Asignacion(bool ejecuta, Variable? v = null)
         {
             maxTipo = Variable.TipoDato.Char;
             float r;
-            v = l.Find(variable => variable.getNombre() == Contenido);
+            v = l.Find(variable => variable.Nombre == Contenido);
             if (v == null)
             {
                 throw new Error("Sintaxis: La variable " + Contenido + " no está definida", log, linea, columna);
@@ -320,18 +310,18 @@ namespace ASM
             if (Contenido == "++")
             {
                 match("++");
-                r = v.getValor() + 1;
-                v.setValor(r);
+                r = v.Valor + 1;
+                v.Valor = r; ;
                 asm.WriteLine("     ; Incremento termino (++)");
-                asm.WriteLine($"     INC DWORD[{v.getNombre()}]");
+                asm.WriteLine($"     INC DWORD[{v.Nombre}]");
             }
             else if (Contenido == "--")
             {
                 match("--");
-                r = v.getValor() - 1;
-                v.setValor(r);
+                r = v.Valor - 1;
+                v.Valor = r; ;
                 asm.WriteLine("     ; Incremento termino (--)");
-                asm.WriteLine($"     DEC DWORD[{v.getNombre()}]");
+                asm.WriteLine($"     DEC DWORD[{v.Nombre}]");
             }
             else if (Contenido == "=")
             {
@@ -360,23 +350,24 @@ namespace ASM
                         //asm.WriteLine("     PUSH EAX");
                         if (ejecuta)
                         {
-                            v?.setValor(numero, maxTipo);
+                            v.Valor = numero;
                         }
+                        asm.WriteLine($"    ;Asignacion de {v?.Nombre} con Console.ReadLine");
+                        asm.WriteLine($"    GET_DEC 4,EAX");
+                        asm.WriteLine($"    MOV DWORD[{v?.Nombre}], EAX");
                     }
                     match(")");
-                    asm.WriteLine($"    ;Asignacion de {v?.getNombre()} con Console.ReadLine");
-                    asm.WriteLine($"     MOV DWORD[{v?.getNombre()}],EAX");
                 }
                 else
                 {
-                    asm.WriteLine($"    ;Asignacion de {v.getNombre()}");
+                    asm.WriteLine($"    ;Asignacion de {v.Nombre}");
                     Expresion();
                     r = s.Pop();
                     asm.WriteLine("     POP EAX");
-                    asm.WriteLine($"     MOV DWORD[{v.getNombre()}],EAX");
+                    asm.WriteLine($"     MOV DWORD[{v.Nombre}],EAX");
                     if (ejecuta)
                     {
-                        v?.setValor(r, maxTipo);
+                        v.Valor = r;
                     }
                 }
             }
@@ -384,72 +375,75 @@ namespace ASM
             {
                 match("+=");
                 Expresion();
-                r = v.getValor() + s.Pop();
+                r = v.Valor + s.Pop();
                 asm.WriteLine("     POP EAX");
                 if (ejecuta)
                 {
-                    v.setValor(r);
+                    v.Valor = r; ;
                 }
                 asm.WriteLine("; (+=)");
-                asm.WriteLine($"     ADD DWORD[{v.getNombre()}], EAX");
+                asm.WriteLine($"     ADD DWORD[{v.Nombre}], EAX");
             }
             else if (Contenido == "-=")
             {
                 match("-=");
                 Expresion();
-                r = v.getValor() - s.Pop();
+                r = v.Valor - s.Pop();
                 asm.WriteLine("     POP EAX");
                 if (ejecuta)
                 {
-                    v.setValor(r);
+                    v.Valor = r; ;
                 }
                 asm.WriteLine("; (-=)");
-                asm.WriteLine($"     SUB DWORD[{v.getNombre()}], EAX");
+                asm.WriteLine($"     SUB DWORD[{v.Nombre}], EAX");
             }
             else if (Contenido == "*=")
             {
                 match("*=");
                 Expresion();
-                r = v.getValor() * s.Pop();
+                r = v.Valor * s.Pop();
                 asm.WriteLine("     POP EAX");
                 if (ejecuta)
                 {
-                    v.setValor(r);
+                    v.Valor = r; ;
                 }
                 asm.WriteLine("; (*=)");
-                asm.WriteLine($"     MUL DWORD[{v.getNombre()}]");
-                asm.WriteLine($"     MOV DWORD[{v.getNombre()}], EAX");
+                asm.WriteLine($"     MUL DWORD[{v.Nombre}]");
+                asm.WriteLine($"     MOV DWORD[{v.Nombre}], EAX");
             }
             else if (Contenido == "/=")
             {
                 match("/=");
                 Expresion();
-                r = v.getValor() / s.Pop();
+                r = v.Valor / s.Pop();
                 asm.WriteLine("     POP EBX");
                 if (ejecuta)
                 {
-                    v.setValor(r);
+                    v.Valor = r; ;
                 }
-                asm.WriteLine("; (/=)");
-                asm.WriteLine($"     MOV EAX,DWORD[{v.getNombre()}]");
+                asm.WriteLine("; /=");
+
+                asm.WriteLine($"     MOV EAX,DWORD[{v.Nombre}]");
+                asm.WriteLine("     MOV EDX, 0");
                 asm.WriteLine($"     DIV EBX");
-                asm.WriteLine($"     MOV DWORD[{v.getNombre()}],EAX");
+                asm.WriteLine($"     MOV DWORD[{v.Nombre}],EAX");
             }
             else if (Contenido == "%=")
             {
                 match("%=");
                 Expresion();
-                r = v.getValor() % s.Pop();
-                asm.WriteLine("     POP EAX");
+                r = v.Valor % s.Pop();
+                asm.WriteLine("     POP EBX");
                 if (ejecuta)
                 {
-                    v.setValor(r);
+                    v.Valor = r; ;
                 }
-                asm.WriteLine("; (%=)");
-                asm.WriteLine("      MOV EDX,0");
-                //asm.WriteLine($"     MOV EAX,DWORD[{v?.getNombre()}]");
-                asm.WriteLine($"     DIV EAX");
-                asm.WriteLine($"     MOV DWORD[{v?.getNombre()}],EDX");
+                asm.WriteLine("; %=");
+
+                asm.WriteLine($"     MOV EAX, DWORD[{v.Nombre}]");
+                asm.WriteLine("     MOV EDX, 0");
+                asm.WriteLine("     DIV EBX");
+                asm.WriteLine($"     MOV DWORD[{v.Nombre}], EDX");
             }
             //displayStack();
         }
@@ -460,10 +454,9 @@ namespace ASM
             match("if");
             match("(");
             asm.WriteLine("\t; Entrando al IF");
-            string label = $"jmp_Else_{ifCont++}";
-            string labelFalse = $"jmp_Continue_If_{continueIfCont++}";
-            bool ejecuta = Condicion(label,false) && ejecuta2;
-            //Console.WriteLine(ejecuta);
+            string labelElse = $"jmp_Else_{ifCont++}"; // Salto al bloque else si la condición es falsa
+            string labelEnd = $"jmp_EndIf_{ifCont++}"; // Salto al final del if
+            bool ejecuta = Condicion(labelElse, false) && ejecuta2; // Si la condición es falsa, salta a labelElse
             match(")");
             if (Contenido == "{")
             {
@@ -473,8 +466,8 @@ namespace ASM
             {
                 Instruccion(ejecuta);
             }
-            asm.WriteLine($"    JMP {labelFalse}");
-            asm.WriteLine($"{label}:");
+            asm.WriteLine($"    JMP {labelEnd}");
+            asm.WriteLine($"{labelElse}:");
             if (Contenido == "else")
             {
                 match("else");
@@ -487,8 +480,8 @@ namespace ASM
                 {
                     Instruccion(ejecutarElse);
                 }
-                asm.WriteLine($"{labelFalse}:");
             }
+            asm.WriteLine($"{labelEnd}:");
         }
         //Condicion -> Expresion operadorRelacional Expresion
         private bool Condicion(string label, bool isDo = false)
@@ -577,7 +570,7 @@ namespace ASM
         BloqueInstrucciones | Intruccion*/
         private void For(bool ejecuta)
         {
-            asm.WriteLine("\t; for");
+            asm.WriteLine("; Entrando al ciclo FOR");
             string label = $"For_{forCont++}";
             string labelFalse = $"jmp_Continue_For_{continueForCont++}";
             match("for");
@@ -623,34 +616,34 @@ namespace ASM
 
             if (Clasificacion == Tipos.Cadena)
             {
-                printStringAsm = true;
                 concatenaciones = Contenido.Trim('"');
+                if (!cadenasASM.Contains(concatenaciones)) // verificar si ya existen, si no es asi,guardar cadenas en la lista
+                {
+                    cadenasASM.Add(concatenaciones);
+                }
                 match(Tipos.Cadena);
+                int numCadena = cadenasASM.IndexOf(concatenaciones) + 1;
                 asm.WriteLine("     ; Console.WriteLine CADENA");
-                asm.WriteLine($"     PUSH cadena_{Cont2CadenasConsoleASM++}"); //Pasar la cadena a imprimir
-                asm.WriteLine("     PUSH format_Str"); //Pasar el formato de impresion
-                asm.WriteLine("     CALL printf");
-                asm.WriteLine("     ADD ESP, 8");//  Limpiar la pila
-                guardarConcat = concatenaciones;
-                //cadenasASM.Add(concatenaciones);
+                asm.WriteLine($"     PRINT_STRING cadena_{numCadena}");
+                if (isWriteLine)
+                {
+                    asm.WriteLine("     NEWLINE");
+                }
+                
             }
             else
             {
-                printNumberAsm = true;
-                Variable? v = l.Find(var => var.getNombre() == Contenido);
+                Variable? v = l.Find(var => var.Nombre == Contenido);
                 if (v == null)
                 {
                     throw new Error("Sintaxis: La variable " + Contenido + " no está definida", log, linea, columna);
                 }
                 else
                 {
-                    concatenaciones = v.getValor().ToString();
+                    concatenaciones = v.Valor.ToString();
                     match(Tipos.Identificador);
                     asm.WriteLine("     ; Console.WriteLine VARIABLE");
-                    asm.WriteLine($"     PUSH DWORD {concatenaciones}");
-                    asm.WriteLine("     PUSH format_Num"); //Pasar el formato de impresion
-                    asm.WriteLine("     CALL printf");
-                    asm.WriteLine("     ADD ESP, 8");//  Limpiar la pila
+                    asm.WriteLine($"     PRINT_DEC 4, {v.Nombre}");
                 }
             }
 
@@ -658,10 +651,17 @@ namespace ASM
             {
                 match("+");
                 concatenaciones += Concatenaciones();  // Se acumula el resultado de las concatenaciones
-                guardarConcat = concatenaciones;
-                //cadenasASM.Add(concatenaciones);
+                if (!cadenasASM.Contains(concatenaciones)) // verificar si ya existen, si no es asi,guardar cadenas en la lista
+                {
+                    cadenasASM.Add(concatenaciones);
+                }
+                int numCadena = cadenasASM.IndexOf(concatenaciones) + 1;
+                asm.WriteLine($"     PRINT_STRING cadena_{numCadena}");
+                if (isWriteLine)
+                {
+                    asm.WriteLine("     NEWLINE");
+                }
             }
-            cadenasASM.Add(guardarConcat);
             match(")");
             match(";");
             if (ejecuta)
@@ -682,10 +682,10 @@ namespace ASM
             string resultado = "";
             if (Clasificacion == Tipos.Identificador)
             {
-                Variable? v = l.Find(variable => variable.getNombre() == Contenido);
+                Variable? v = l.Find(variable => variable.Nombre == Contenido);
                 if (v != null)
                 {
-                    resultado = v.getValor().ToString(); // Obtener el valor de la variable y convertirla
+                    resultado = v.Valor.ToString(); // Obtener el valor de la variable y convertirla
                 }
                 else
                 {
@@ -787,6 +787,7 @@ namespace ASM
                         break;
                     case "%":
                         s.Push(n2 % n1);
+                        asm.WriteLine("     MOV EDX,0");
                         asm.WriteLine("     DIV EBX");
                         asm.WriteLine("     PUSH EDX");
                         break;
@@ -812,19 +813,19 @@ namespace ASM
             }
             else if (Clasificacion == Tipos.Identificador)
             {
-                Variable? v = l.Find(variable => variable.getNombre() == Contenido);
+                Variable? v = l.Find(variable => variable.Nombre == Contenido);
 
                 if (v == null)
                 {
                     throw new Error("Sintaxis: la variable " + Contenido + " no está definida ", log, linea, columna);
                 }
 
-                if (maxTipo < v.getTipoDato())
+                if (maxTipo < v.Tipo)
                 {
-                    maxTipo = v.getTipoDato();
+                    maxTipo = v.Tipo;
                 }
 
-                s.Push(v.getValor());
+                s.Push(v.Valor);
                 asm.WriteLine($"     MOV EAX, DWORD[{Contenido}]");
                 asm.WriteLine("     PUSH EAX");
                 match(Tipos.Identificador);
@@ -855,12 +856,10 @@ namespace ASM
                 if (huboCasteo)
                 {
                     float valor = s.Pop(); // Obtener el valor actual de la pila
-                    asm.WriteLine("     POP");
+                    asm.WriteLine("     POP EAX");
                     switch (tipoCasteo)
                     {
                         case Variable.TipoDato.Int:
-                            /*float valorEntero = valor - (valor % 1); // valor total - parte decimal
-                            valor = valorEntero;*/
                             valor %= 65536; //  2^16
                             break;
                         case Variable.TipoDato.Char:
@@ -869,7 +868,7 @@ namespace ASM
                             break;
                     }
                     s.Push(valor); // Regresar el valor casteado al stack
-                    asm.WriteLine("     PUSH");
+                    asm.WriteLine("     PUSH EAX");
                     maxTipo = tipoCasteo; // Actualizar el tipo máximo
                 }
                 match(")");

@@ -1,5 +1,5 @@
 ;Archivo: Prueba.cpp
-;Fecha y hora: 14/03/2025 03:37:19 p. m.
+;Fecha y hora: 14/03/2025 03:55:56 p. m.
 %include "io.inc"
 segment .text
 global main
@@ -234,7 +234,6 @@ While_1:
      JA jmp_Continue_While_1
      ; Console.WriteLine CADENA
      PRINT_STRING cadena_5
-     PRINT_STRING cadena_6
      ; Incremento termino (++)
      INC DWORD[j]
      JMP While_1
@@ -285,5 +284,4 @@ section .data
     cadena_2 db "*", 0
     cadena_3 db "-", 0
     cadena_4 db " ", 0
-    cadena_5 db "a", 0
-    cadena_6 db "a1", 0
+    cadena_5 db "1", 0

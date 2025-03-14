@@ -50,7 +50,7 @@ static void Main(string[] args)
         j = 1;
         while (j <= i)
         {
-            Console.Write("a" + j);
+            Console.Write("" + j);
             j++;
         }
         Console.WriteLine("");

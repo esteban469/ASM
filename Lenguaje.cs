@@ -65,6 +65,8 @@ namespace ASM
         Variable.TipoDato maxTipo;
         private string concatenaciones = "";
         List<string> cadenasASM = new List<string>();
+        private string guardarCadena = "";
+        private bool cadenaToPrint = false;
 
         public Lenguaje(string nombre = "Prueba.cpp") : base(nombre)
         {
@@ -616,20 +618,10 @@ namespace ASM
 
             if (Clasificacion == Tipos.Cadena)
             {
+                cadenaToPrint = true;
                 concatenaciones = Contenido.Trim('"');
-                if (!cadenasASM.Contains(concatenaciones)) // verificar si ya existen, si no es asi,guardar cadenas en la lista
-                {
-                    cadenasASM.Add(concatenaciones);
-                }
                 match(Tipos.Cadena);
-                int numCadena = cadenasASM.IndexOf(concatenaciones) + 1;
-                asm.WriteLine("     ; Console.WriteLine CADENA");
-                asm.WriteLine($"     PRINT_STRING cadena_{numCadena}");
-                if (isWriteLine)
-                {
-                    asm.WriteLine("     NEWLINE");
-                }
-                
+                guardarCadena = concatenaciones;// variable para sobreescribir una cadena si hay concatenacion
             }
             else
             {
@@ -651,16 +643,22 @@ namespace ASM
             {
                 match("+");
                 concatenaciones += Concatenaciones();  // Se acumula el resultado de las concatenaciones
-                if (!cadenasASM.Contains(concatenaciones)) // verificar si ya existen, si no es asi,guardar cadenas en la lista
-                {
-                    cadenasASM.Add(concatenaciones);
-                }
+                guardarCadena = concatenaciones;
+            }
+            if (!cadenasASM.Contains(guardarCadena)) // verificar si ya existe, si no es asi,guardar cadena en la lista
+            {
+                cadenasASM.Add(guardarCadena);
+            }
+            if (cadenaToPrint == true)
+            {
                 int numCadena = cadenasASM.IndexOf(concatenaciones) + 1;
+                asm.WriteLine("     ; Console.WriteLine CADENA");
                 asm.WriteLine($"     PRINT_STRING cadena_{numCadena}");
                 if (isWriteLine)
                 {
                     asm.WriteLine("     NEWLINE");
                 }
+                cadenaToPrint = false;
             }
             match(")");
             match(";");

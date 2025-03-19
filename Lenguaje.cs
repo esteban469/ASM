@@ -93,6 +93,18 @@ namespace ASM
             foreach (Variable elemento in l)
             {
                 log.WriteLine($"{elemento.Nombre} {elemento.Tipo} {elemento.Valor}");
+                /*switch(elemento.Tipo)
+                {
+                    case Variable.TipoDato.Char:
+                        asm.WriteLine($"    {elemento.Nombre} DB 0");
+                        break;
+                    case Variable.TipoDato.Int:
+                        asm.WriteLine($"    {elemento.Nombre} DW 0");
+                        break;
+                    case Variable.TipoDato.Float:
+                        asm.WriteLine($"    {elemento.Nombre} DD 0");
+                        break;
+                }*/
                 asm.WriteLine($"    {elemento.Nombre} DD 0"); //{elemento.Valor}");
             }
 
@@ -643,22 +655,22 @@ namespace ASM
             {
                 match("+");
                 concatenaciones += Concatenaciones();  // Se acumula el resultado de las concatenaciones
-                guardarCadena = concatenaciones;
+                //guardarCadena = concatenaciones;
             }
             if (!cadenasASM.Contains(guardarCadena)) // verificar si ya existe, si no es asi,guardar cadena en la lista
             {
-                cadenasASM.Add(guardarCadena);
+                cadenasASM.Add(guardarCadena);// guardar cadena
             }
-            if (cadenaToPrint == true)
+            if (cadenaToPrint == true)// evitar que se imprima si no hay una cadena en TODO el codigo
             {
-                int numCadena = cadenasASM.IndexOf(concatenaciones) + 1;
+                int numCadena = cadenasASM.IndexOf(concatenaciones) + 1;// obtener el indice de la cadena ya guardada
                 asm.WriteLine("     ; Console.WriteLine CADENA");
-                asm.WriteLine($"     PRINT_STRING cadena_{numCadena}");
+                asm.WriteLine($"     PRINT_STRING cadena_{numCadena}");// imprimir cadena con el valor del indice
                 if (isWriteLine)
                 {
-                    asm.WriteLine("     NEWLINE");
+                    asm.WriteLine("     NEWLINE");// imprimir newline si es WriteLine
                 }
-                cadenaToPrint = false;
+                cadenaToPrint = false;// reiniciar variable
             }
             match(")");
             match(";");
@@ -695,6 +707,11 @@ namespace ASM
             {
                 resultado = Contenido.Trim('"');
                 match(Tipos.Cadena);
+            }
+            else if (Clasificacion == Tipos.Numero)
+            {
+                resultado += Contenido;
+                match(Tipos.Numero);
             }
             if (Contenido == "+")
             {

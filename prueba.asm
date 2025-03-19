@@ -1,5 +1,5 @@
 ;Archivo: Prueba.cpp
-;Fecha y hora: 14/03/2025 03:55:56 p. m.
+;Fecha y hora: 19/03/2025 12:19:39 p. m.
 %include "io.inc"
 segment .text
 global main
@@ -33,13 +33,14 @@ main:
      POP EAX
      MOV DWORD[c],EAX
      ; Console.WriteLine CADENA
-     PRINT_STRING cadena_1
+     PRINT_STRING cadena_0
      NEWLINE
-    ;Asignacion de altura
-     MOV EAX, 5
-     PUSH EAX
-     POP EAX
-     MOV DWORD[altura],EAX
+     ; Console.WriteLine CADENA
+     PRINT_STRING cadena_2
+     NEWLINE
+    ;Asignacion de altura con Console.ReadLine
+    GET_DEC 4,EAX
+    MOV DWORD[altura], EAX
     ;Asignacion de x
      MOV EAX, 3
      PUSH EAX
@@ -139,7 +140,7 @@ For_2:
      POP EBX
      POP EAX
      CMP EAX, EBX
-     JA jmp_Continue_For_2
+     JAE jmp_Continue_For_2
      ; Incremento termino (++)
      INC DWORD[j]
 	; Entrando al IF
@@ -159,16 +160,16 @@ For_2:
      CMP EAX, EBX
      JNE jmp_Else_1
      ; Console.WriteLine CADENA
-     PRINT_STRING cadena_2
+     PRINT_STRING cadena_3
     JMP jmp_EndIf_2
 jmp_Else_1:
      ; Console.WriteLine CADENA
-     PRINT_STRING cadena_3
+     PRINT_STRING cadena_4
 jmp_EndIf_2:
      JMP For_2
 jmp_Continue_For_2:
      ; Console.WriteLine CADENA
-     PRINT_STRING cadena_4
+     PRINT_STRING cadena_5
      NEWLINE
      JMP For_1
 jmp_Continue_For_1:
@@ -180,7 +181,7 @@ jmp_Continue_For_1:
 	; do
 jmp_DO_1:
      ; Console.WriteLine CADENA
-     PRINT_STRING cadena_3
+     PRINT_STRING cadena_4
      ; Incremento termino (++)
      INC DWORD[i]
      MOV EAX, DWORD[i]
@@ -198,7 +199,7 @@ jmp_DO_1:
      CMP EAX, EBX
      JB jmp_DO_1
      ; Console.WriteLine CADENA
-     PRINT_STRING cadena_4
+     PRINT_STRING cadena_5
      NEWLINE
 ; Entrando al ciclo FOR
     ;Asignacion de i
@@ -231,15 +232,15 @@ While_1:
      POP EBX
      POP EAX
      CMP EAX, EBX
-     JA jmp_Continue_While_1
-     ; Console.WriteLine CADENA
-     PRINT_STRING cadena_5
+     JAE jmp_Continue_While_1
+     ; Console.WriteLine VARIABLE
+     PRINT_DEC 4, j
      ; Incremento termino (++)
      INC DWORD[j]
      JMP While_1
 jmp_Continue_While_1:
      ; Console.WriteLine CADENA
-     PRINT_STRING cadena_4
+     PRINT_STRING cadena_5
      NEWLINE
      JMP For_3
 jmp_Continue_For_3:
@@ -251,7 +252,7 @@ jmp_Continue_For_3:
 	; do
 jmp_DO_2:
      ; Console.WriteLine CADENA
-     PRINT_STRING cadena_3
+     PRINT_STRING cadena_4
      ; Incremento termino (++)
      INC DWORD[i]
      MOV EAX, DWORD[i]
@@ -269,7 +270,7 @@ jmp_DO_2:
      CMP EAX, EBX
      JB jmp_DO_2
      ; Console.WriteLine CADENA
-     PRINT_STRING cadena_4
+     PRINT_STRING cadena_5
      NEWLINE
 	RET
 section .data
@@ -280,8 +281,8 @@ section .data
     y DD 0
     z DD 0
     c DD 0
-    cadena_1 db "Valor de altura = ", 0
-    cadena_2 db "*", 0
-    cadena_3 db "-", 0
-    cadena_4 db " ", 0
-    cadena_5 db "1", 0
+    cadena_1 db "Valor de y = ", 0
+    cadena_2 db "Valor de altura = ", 0
+    cadena_3 db "*", 0
+    cadena_4 db "-", 0
+    cadena_5 db " ", 0
